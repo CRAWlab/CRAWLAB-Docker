@@ -1,0 +1,33 @@
+version: '2'
+services:
+#  master:
+#    build: .
+#    container_name: master
+#    command: 
+#      - roscore
+  
+  roboclaw:
+    build: .
+    container_name: roboclaw
+    environment:
+      - "ROS_HOSTNAME=roboclaw"
+      - "ROS_MASTER_URI=http://master:11311"
+    devices:
+      - "/dev/ttyACM0:/dev/ttyACM0"
+    command: roslaunch roboclaw_node roboclaw.launch max_speed:=1.1 ticks_per_meter:=3701.726 base_width:=0.26035
+
+  pub:
+    build: .
+    container_name: pub
+    environment:
+      - "ROS_HOSTNAME=pub"
+      - "ROS_MASTER_URI=http://master:11311"
+    command: rostopic pub -r 1 /cmd_vel geometry_msgs/Twist '[0.25, 0.0, 0.0]' '[0.0, 0.0, 0.0]'
+    
+  monitor:
+    build: .
+    container_name: monitor
+    environment:
+      - "ROS_HOSTNAME=monitor"
+      - "ROS_MASTER_URI=http://master:11311"
+    command: rostopic echo /odom
