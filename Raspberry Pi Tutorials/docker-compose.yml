@@ -1,3 +1,4 @@
+# Copied from tutorial at: https://hub.docker.com/_/ros/
 version: '2'
 services:
   master:

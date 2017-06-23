@@ -1,33 +1,61 @@
+# -----------------------------------------------------------------------------
+# This compose file creates four docker services:
+#   master - Runs roscore
+#   roboclaw - runs the roboclaw node via roslaunch
+#   pub - publishes a velocity command to /cmd_vel topic every second
+#   monitor - just rostopic echo the /odom topic
+#
+# Other than the master, the services sleep for 2s before launching the ROS
+# functions, to allow the master node time to start. There is probably a more
+# elegant way to do this, but this works for now (as of 06/23/17).
+#
+# Created: 06/23/17 - Joshua Vaughan - joshua.vaughan@louisiana.edu
+# 
+# Modified:
+#   * 
+#
+# TODO:
+#   * 
+# ----------------------------------------------------------------------------- 
+
 version: '2'
 services:
-#  master:
-#    build: .
-#    container_name: master
-#    command: 
-#      - roscore
+    master:
+        build: .
+        container_name: master
+        environment:
+          - "ROS_HOSTNAME=master"
+        command: roscore
   
-  roboclaw:
-    build: .
-    container_name: roboclaw
-    environment:
-      - "ROS_HOSTNAME=roboclaw"
-      - "ROS_MASTER_URI=http://master:11311"
-    devices:
-      - "/dev/ttyACM0:/dev/ttyACM0"
-    command: roslaunch roboclaw_node roboclaw.launch max_speed:=1.1 ticks_per_meter:=3701.726 base_width:=0.26035
+    roboclaw:
+        build: .
+        container_name: roboclaw
+        user: root # Root needed for access to serial i/o on Raspberry Pi
+        depends_on:
+            - "master"
+        environment:
+            - "ROS_HOSTNAME=roboclaw"
+            - "ROS_MASTER_URI=http://master:11311"
+        devices:
+            - "/dev/ttyACM0:/dev/ttyACM0"
+        command: /bin/bash -c "sleep 2 && roslaunch roboclaw_node roboclaw.launch max_speed:=1.1 ticks_per_meter:=3701.726 base_width:=0.26035"
 
-  pub:
-    build: .
-    container_name: pub
-    environment:
-      - "ROS_HOSTNAME=pub"
-      - "ROS_MASTER_URI=http://master:11311"
-    command: rostopic pub -r 1 /cmd_vel geometry_msgs/Twist '[0.25, 0.0, 0.0]' '[0.0, 0.0, 0.0]'
-    
-  monitor:
-    build: .
-    container_name: monitor
-    environment:
-      - "ROS_HOSTNAME=monitor"
-      - "ROS_MASTER_URI=http://master:11311"
-    command: rostopic echo /odom
+    pub:
+        build: .
+        container_name: pub
+        depends_on:
+            - "master"
+        environment:
+            - "ROS_HOSTNAME=pub"
+            - "ROS_MASTER_URI=http://master:11311"
+        command: /bin/bash -c "sleep 2 && rostopic pub -r 1 /cmd_vel geometry_msgs/Twist '[0.25, 0.0, 0.0]' '[0.0, 0.0, 0.0]'"
+
+    monitor:
+        build: .
+        container_name: monitor
+        depends_on:
+            - "master"
+        environment:
+            - "ROS_HOSTNAME=monitor"
+            - "ROS_MASTER_URI=http://master:11311"
+        command: /bin/bash -c "sleep 2 && rostopic echo -c /odom"

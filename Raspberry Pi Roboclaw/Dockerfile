@@ -1,8 +1,22 @@
-# This dockerfile created a container with the common ros tutorials installed
+# -----------------------------------------------------------------------------
+# This dockerfile creates a container with the common ROS tutorials installed 
+# and adds the files necessary to use the roboclaw motor driver. It will only
+# work on a Raspberry Pi.
+#
+# Created: 06/23/17 - Joshua Vaughan - joshua.vaughan@louisiana.edu
+# 
+# Modified:
+#   *
+# 
+# TODO:
+#   * 
+# -----------------------------------------------------------------------------
 
-FROM pablogn/rpi-ros-core-indigo
+# Pull from he base image for ROS on Raspberry Pi
+FROM pablogn/rpi-ros-core-indigo 
 
-# install ros tutorials packages
+# Then, install ROS tutorials packages, pyserial, and 
+# remove the package list to save space
 RUN sudo apt-get update && sudo apt-get install -y \
     ros-indigo-ros-tutorials \
     ros-indigo-common-tutorials \
@@ -11,7 +25,7 @@ RUN sudo apt-get update && sudo apt-get install -y \
     python-serial \
     && sudo rm -rf /var/lib/apt/lists/
 
-# get the roboclaw ROS package from github and run it
+# Get the roboclaw ROS package from github and install it
 RUN /bin/bash -c "mkdir -p ~/catkin_ws/src && \
                   cd ~/catkin_ws/src && \
                   git clone https://github.com/sonyccd/roboclaw_ros.git && \
