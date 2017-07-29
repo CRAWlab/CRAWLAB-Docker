@@ -14,11 +14,4 @@ docker run -it --rm --net stingray --name=echo --env ROS_HOSTNAME=echo --env ROS
 docker run -it --rm --net roboclaw_default --name=master ros:roboclaw roscore
 
 
-
-docker run -it --rm --net roboclaw_default --device=/dev/ttyACM0:/dev/ttyACM0 --name roboclaw ros:roboclaw roslaunch
-
-
-docker run -it --rm --net roboclaw_default --name pub_stop --env ROS_HOSTNAME=pub_stop --env ROS_MASTER_URI=http://master:11311 ros:roboclaw 
-
-
-docker run -it --rm --net roboclaw_default --name pub_stop --env ROS_HOSTNAME=pub_stop --env ROS_MASTER_URI=http://master:11311 ros:roboclaw
+rosrun nmea_navsat_driver nmea_serial_driver _port:=/dev/ttyAMA0 _baud:=9600

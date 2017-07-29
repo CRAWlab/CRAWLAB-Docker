@@ -6,7 +6,8 @@
 # Created: 06/23/17 - Joshua Vaughan - joshua.vaughan@louisiana.edu
 # 
 # Modified:
-#   *
+#   * 07/28/17 - JEV - joshua.vaughan@louisiana.edu
+#       - Added entrypoint
 # 
 # TODO:
 # * 
@@ -27,3 +28,11 @@ RUN sudo apt-get update && sudo apt-get install -y \
     ros-indigo-rocon-qt-library \ 
     ros-indigo-ar-track-alvar-msgs \
     && sudo rm -rf /var/lib/apt/lists/
+
+# setup entrypoint
+WORKDIR /home/pi/catkin_ws
+COPY ./entrypoint.sh entrypoint.sh
+RUN sudo chown pi:pi entrypoint.sh
+ENTRYPOINT ["./entrypoint.sh"]
+CMD ["/bin/bash"]
+USER pi

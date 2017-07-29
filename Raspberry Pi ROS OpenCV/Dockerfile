@@ -82,5 +82,10 @@ RUN cd /tmp/opencv-$OPENCV_VERSION && \
 RUN cd /tmp && rm -rf opencv-$OPENCV_VERSION
 RUN sudo rm -rf /var/lib/apt/lists/
 
-
+# setup entrypoint
+WORKDIR /home/pi/catkin_ws
+COPY ./entrypoint.sh entrypoint.sh
+RUN sudo chown pi:pi entrypoint.sh
+ENTRYPOINT ["./entrypoint.sh"]
 CMD ["/bin/bash"]
+USER pi
