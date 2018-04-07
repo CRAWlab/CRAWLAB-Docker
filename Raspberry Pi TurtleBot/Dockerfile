@@ -30,9 +30,9 @@ RUN sudo apt-get update && sudo apt-get install -y \
     && sudo rm -rf /var/lib/apt/lists/
 
 # setup entrypoint
-WORKDIR /home/pi/catkin_ws
-COPY ./entrypoint.sh entrypoint.sh
-RUN sudo chown pi:pi entrypoint.sh
-ENTRYPOINT ["./entrypoint.sh"]
-CMD ["/bin/bash"]
-USER pi
+# WORKDIR /home/pi/catkin_ws
+# COPY ./entrypoint.sh entrypoint.sh
+# RUN sudo chown pi:pi entrypoint.sh
+# ENTRYPOINT ["./entrypoint.sh"]
+# CMD ["/bin/bash"]
+# USER pi
