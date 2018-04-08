@@ -1,0 +1,2 @@
+### CRAWLAB Files for Docker
+This repository contains files for use with [Docker](https://www.docker.com). Most of these are currently for using [ROS](http://www.ros.org) inside a container. They include TurtleBot tutorials, the base ROS tutorials, OpenCV, and others. Those for the Raspberry Pi indicate so in the folder name.
