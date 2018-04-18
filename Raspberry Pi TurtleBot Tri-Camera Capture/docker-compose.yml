@@ -1,4 +1,5 @@
 version: '3'
+
 services:
   master:
     image: ros:turtlebot2
@@ -20,21 +21,37 @@ services:
     volumes:
        - /home/pi/Documents/CRAWLABscripts:/home/pi/crawlab
     command: python /home/pi/crawlab/turtlebot_MQTTinput.py
+
+  mqtt_status:
+    image: ros:MQTT
+    container_name: mqtt_status
+    environment:
+      - "ROS_HOSTNAME=mqtt_status"
+      - "ROS_MASTER_URI=http://master:11311"
+    volumes:
+       - /home/pi/Documents/CRAWLABscripts:/home/pi/crawlab
+    command: python /home/pi/crawlab/turtlebot_status_pub.py
   
   cameras:
-    privileged: true
-    image: ros:OpenCV
-    container_name: cameras
-    environment:
-      - "ROS_HOSTNAME=cameras"
-      - "ROS_MASTER_URI=http://master:11311"
-    devices:
-      - "/dev/video0:/dev/video0"
-      - "/dev/video1:/dev/video1"
-      - "/dev/video2:/dev/video2"
-    volumes:
-      - /dev/video0:/dev/video0
-      - /dev/video1:/dev/video1
-      - /dev/video2:/dev/video2
-      - /home/pi/Documents/CRAWLABscripts:/home/pi/crawlab
-    command: python /home/pi/crawlab/turtlebot_odomBasedImageSave.py
+   privileged: true
+   image: ros:OpenCV
+   container_name: cameras
+   environment:
+     - "ROS_HOSTNAME=cameras"
+     - "ROS_MASTER_URI=http://master:11311"
+   devices:
+     - "/dev/video0:/dev/video0"
+     - "/dev/video1:/dev/video1"
+     - "/dev/video2:/dev/video2"
+   volumes:
+     - /dev/video0:/dev/video0
+     - /dev/video1:/dev/video1
+     - /dev/video2:/dev/video2
+     - /home/pi/Documents/CRAWLABscripts:/home/pi/crawlab
+   command: python /home/pi/crawlab/turtlebot_odomBasedImageSave.py
+   
+ 
+#networks:
+# default:
+#   external:
+#     name: turtlebot
