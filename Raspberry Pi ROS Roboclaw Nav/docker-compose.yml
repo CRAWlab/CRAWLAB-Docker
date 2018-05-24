@@ -40,22 +40,39 @@ services:
             - "/dev/ttyACM0:/dev/ttyACM0"
         command: /bin/bash -c "sleep 2 && roslaunch roboclaw_node roboclaw.launch max_speed:=1.1 ticks_per_meter:=3701.726 base_width:=0.26035"
 
-    pub:
+    gps:
         build: .
-        container_name: pub
+        container_name: gps
+        user: root # Root needed for access to serial i/o on Raspberry Pi
         depends_on:
             - "master"
         environment:
-            - "ROS_HOSTNAME=pub"
+            - "ROS_HOSTNAME=gps"
             - "ROS_MASTER_URI=http://master:11311"
-        command: /bin/bash -c "sleep 2 && rostopic pub -r 1 /cmd_vel geometry_msgs/Twist '[0.25, 0.0, 0.0]' '[0.0, 0.0, 0.0]'"
+        devices:
+            - "/dev/ttyAMA0:/dev/ttyAMA0"
+        command: /bin/bash -c "sleep 2 && rosrun nmea_navsat_driver nmea_serial_driver _port:=/dev/ttyAMA0 _baud:=9600 fix:=/gps/fix"
 
-    monitor:
+    navigation:
         build: .
-        container_name: monitor
+        container_name: navigation
         depends_on:
             - "master"
+            - "roboclaw"
+            - "gps"
         environment:
-            - "ROS_HOSTNAME=monitor"
+            - "ROS_HOSTNAME=navigation"
             - "ROS_MASTER_URI=http://master:11311"
-        command: /bin/bash -c "sleep 2 && rostopic echo -c /odom"
+        volumes:
+            - /home/pi/Documents/ROS/dead_reckoning:/home/pi/crawlab
+        command: python /home/pi/crawlab/stingray_ROS_deadReckoning_GPS.py
+
+#    monitor:
+#        build: .
+#        container_name: monitor
+#        depends_on:
+#            - "master"
+#        environment:
+#            - "ROS_HOSTNAME=monitor"
+#            - "ROS_MASTER_URI=http://master:11311"
+#        command: /bin/bash -c "sleep 2 && rostopic echo -c /gps/fix"
