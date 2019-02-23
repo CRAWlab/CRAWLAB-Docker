@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  master:
+    image: ros:turtlebot2
+    container_name: master
+    ports:
+      - 11311:11311
+#    environment:
+#      - TURTLEBOT_3D_SENSOR="kinect"
+    devices:
+      - "/dev/kobuki"
+    command: roslaunch turtlebot_bringup minimal.launch zeroconf:=false
+  
+  mqtt_teleop:
+    image: ros:MQTT
+    container_name: mqtt
+    environment:
+      - "ROS_HOSTNAME=mqtt"
+      - "ROS_MASTER_URI=http://master:11311"
+    volumes:
+       - /home/pi/Documents/CRAWLABscripts:/home/pi/crawlab
+    command: python /home/pi/crawlab/turtlebot_MQTTinput.py
+
+  mqtt_status:
+    image: ros:MQTT
+    container_name: mqtt_status
+    environment:
+      - "ROS_HOSTNAME=mqtt_status"
+      - "ROS_MASTER_URI=http://master:11311"
+    volumes:
+       - /home/pi/Documents/CRAWLABscripts:/home/pi/crawlab
+    command: python /home/pi/crawlab/turtlebot_status_pub.py
+   
+ 
+#networks:
+# default:
+#   external:
+#     name: turtlebot
