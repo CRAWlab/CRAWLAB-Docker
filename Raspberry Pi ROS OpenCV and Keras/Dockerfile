@@ -17,12 +17,16 @@
 # Pull from the base image for ROS on Raspberry Pi
 FROM ros:OpenCV
 
-# install necessary libraries
-RUN sudo pip install --extra-index-url=https://www.piwheels.org/simple keras #tensorflow
+RUN sudo apt-get update &&\
+    sudo apt-get install -y libhdf5-dev
 
-	
+# install necessary libraries --extra-index-url=https://www.piwheels.org/simple
+RUN sudo pip install pgen &&\
+    sudo pip install Cython &&\
+    sudo pip install h5py &&\
+    sudo pip install keras #tensorflow
+
 # cleanup source
-RUN cd /tmp && rm -rf opencv-$OPENCV_VERSION
 RUN sudo rm -rf /var/lib/apt/lists/
 
 # setup entrypoint
