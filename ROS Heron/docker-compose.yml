@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  master:
+    image: ros:heron
+    container_name: master
+    ports:
+      - 6080:80
+      - 5901:5900
+    environment:
+      - "RESOLUTION=1920x1080"
+      - "USER=ubuntu"
+      - "PASSWORD=crawlab"
+#    devices:
+#      - "/dev/kobuki"
+#    command: roslaunch heron_gazebo heron_world.launch zeroconf:=false
