@@ -8,6 +8,10 @@
 # Modified:
 #   * 07/28/17 - JEV - joshua.vaughan@louisiana.edu
 #       - Added entrypoint
+#   * 06/26/21 - JEV - joshua.vaughan@louisiana.edu 
+#       - re-added entrypoint
+#       - consolidated "fix" images here
+#       - Added MQTT
 # 
 # TODO:
 # * 
@@ -27,12 +31,16 @@ RUN sudo apt-get update && sudo apt-get install -y \
     ros-indigo-rocon-remocon \ 
     ros-indigo-rocon-qt-library \ 
     ros-indigo-ar-track-alvar-msgs \
+    python-pip && \
+    sudo pip install paho-mqtt &&\
+    sudo apt-get clean &&\
+    sudo rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
     && sudo rm -rf /var/lib/apt/lists/
 
 # setup entrypoint
-# WORKDIR /home/pi/catkin_ws
-# COPY ./entrypoint.sh entrypoint.sh
-# RUN sudo chown pi:pi entrypoint.sh
-# ENTRYPOINT ["./entrypoint.sh"]
-# CMD ["/bin/bash"]
-# USER pi
+WORKDIR /home/pi/catkin_ws
+COPY ./entrypoint.sh entrypoint.sh
+RUN sudo chown pi:pi entrypoint.sh
+ENTRYPOINT ["./entrypoint.sh"]
+CMD ["/bin/bash"]
+USER pi
