@@ -2,7 +2,7 @@ version: '3'
 
 services:
   master:
-    image: ros:turtlebot2
+    image: ros:turtlebot
     container_name: master
     ports:
       - 11311:11311
@@ -13,7 +13,7 @@ services:
     command: roslaunch turtlebot_bringup minimal.launch zeroconf:=false
   
   mqtt_teleop:
-    image: ros:MQTT
+    image: ros:turtlebot
     container_name: mqtt
     environment:
       - "ROS_HOSTNAME=mqtt"
@@ -23,7 +23,7 @@ services:
     command: python /home/pi/crawlab/turtlebot_MQTTinput.py
 
   mqtt_status:
-    image: ros:MQTT
+    image: ros:turtlebot
     container_name: mqtt_status
     environment:
       - "ROS_HOSTNAME=mqtt_status"
